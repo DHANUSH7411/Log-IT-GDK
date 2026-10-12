@@ -12,12 +12,14 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const useSSL = process.env.DB_SSL === 'true';
+const targetDb = process.env.DB_NAME || 'moviebox_db';
 
 const config = {
   host: process.env.DB_HOST || '127.0.0.1',
   port: parseInt(process.env.DB_PORT || '3307', 10),
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
+  database: targetDb,
   multipleStatements: true,
   ...(useSSL && {
     ssl: {
@@ -28,22 +30,42 @@ const config = {
 };
 
 async function initDatabase() {
-  console.log(`Connecting to MySQL at ${config.host}:${config.port} as ${config.user}...`);
+  console.log(`Connecting to MySQL at ${config.host}:${config.port}/${targetDb} as ${config.user}...`);
   let connection;
 
   try {
     connection = await mysql.createConnection(config);
-    console.log('Connected to MySQL server.');
+    console.log(`Connected to MySQL server (target database: ${targetDb}).`);
+
+    // Ensure the target database exists and is selected
+    try {
+      await connection.query(`CREATE DATABASE IF NOT EXISTS \`${targetDb}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+    } catch (createErr) {
+      const isPermissionDenied =
+        createErr.code === 'ER_DBACCESS_DENIED_ERROR' ||
+        createErr.code === 'ER_ACCESS_DENIED_ERROR' ||
+        createErr.errno === 1044 ||
+        createErr.errno === 1045;
+
+      if (isPermissionDenied) {
+        console.log(`Note: Lacked privileges to run CREATE DATABASE for '${targetDb}'. Proceeding to USE existing database.`);
+      } else {
+        throw createErr;
+      }
+    }
+    await connection.query(`USE \`${targetDb}\`;`);
 
     const schemaPath = path.join(__dirname, '../db/schema.sql');
-    const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+    let schemaSql = fs.readFileSync(schemaPath, 'utf8');
 
-    console.log('Executing schema.sql...');
+    // Remove any hardcoded CREATE DATABASE / USE statements so tables are created in targetDb
+    schemaSql = schemaSql
+      .replace(/CREATE DATABASE IF NOT EXISTS\s+`?moviebox_db`?[^;]*;/gi, '')
+      .replace(/USE\s+`?moviebox_db`?;/gi, '');
+
+    console.log(`Executing schema.sql in ${targetDb}...`);
     await connection.query(schemaSql);
-    console.log('Database and tables initialized successfully.');
-
-    // Switch to moviebox_db
-    await connection.changeUser({ database: process.env.DB_NAME || 'moviebox_db' });
+    console.log(`Database and tables initialized successfully in ${targetDb}.`);
 
     // Seed demo user if none exists
     const [existingUsers] = await connection.query('SELECT id, email FROM users WHERE email = ?', ['demo@moviebox.local']);
