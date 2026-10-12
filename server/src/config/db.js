@@ -7,6 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
+const useSSL = process.env.DB_SSL === 'true';
+
 const dbConfig = {
   host: process.env.DB_HOST || '127.0.0.1',
   port: parseInt(process.env.DB_PORT || '3307', 10),
@@ -17,7 +19,13 @@ const dbConfig = {
   connectionLimit: 10,
   queueLimit: 0,
   enableKeepAlive: true,
-  keepAliveInitialDelay: 0
+  keepAliveInitialDelay: 0,
+  ...(useSSL && {
+    ssl: {
+      rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true',
+      ...(process.env.DB_SSL_CA && { ca: process.env.DB_SSL_CA })
+    }
+  })
 };
 
 // Create the connection pool

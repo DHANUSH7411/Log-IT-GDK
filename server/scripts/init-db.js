@@ -11,12 +11,20 @@ const __dirname = path.dirname(__filename);
 // Load environment variables from server/.env
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
+const useSSL = process.env.DB_SSL === 'true';
+
 const config = {
   host: process.env.DB_HOST || '127.0.0.1',
   port: parseInt(process.env.DB_PORT || '3307', 10),
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  multipleStatements: true
+  multipleStatements: true,
+  ...(useSSL && {
+    ssl: {
+      rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true',
+      ...(process.env.DB_SSL_CA && { ca: process.env.DB_SSL_CA })
+    }
+  })
 };
 
 async function initDatabase() {
