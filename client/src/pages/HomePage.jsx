@@ -194,9 +194,13 @@ export default function HomePage() {
         {tmdbError && (
           <div className="alert alert-dark border-secondary p-4 rounded text-center my-4">
             <h5 className="text-white fw-bold mb-2">TMDB Live Data Not Available</h5>
-            <p className="text-secondary mb-3">{tmdbError}</p>
+            <p className="text-secondary mb-3">
+              {typeof tmdbError === 'string'
+                ? tmdbError
+                : tmdbError?.message || JSON.stringify(tmdbError)}
+            </p>
             <p className="small text-muted mb-0">
-              Please ensure your <code>TMDB_API_KEY</code> is configured in <code>server/.env</code>.
+              Please check your backend connection, CORS settings, or verify that <code>TMDB_API_KEY</code> is configured on your server.
             </p>
           </div>
         )}
