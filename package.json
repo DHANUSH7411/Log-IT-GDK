@@ -1,0 +1,16 @@
+{
+  "name": "moviebox-root",
+  "version": "1.0.0",
+  "description": "MovieBox - Movie & TV Series Discovery and Personal Tracker",
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "db:init": "npm --prefix server run db:init"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

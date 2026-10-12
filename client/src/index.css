@@ -1,0 +1,115 @@
+:root {
+  --mb-bg-dark: #0f1014;
+  --mb-bg-card: #181920;
+  --mb-bg-card-hover: #22242f;
+  --mb-red: #e50914;
+  --mb-red-hover: #b80710;
+  --mb-text-primary: #ffffff;
+  --mb-text-secondary: #9ca3af;
+  --mb-text-muted: #6b7280;
+  --mb-border: #272a38;
+}
+
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--mb-bg-dark);
+  color: var(--mb-text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0c0e;
+}
+::-webkit-scrollbar-thumb {
+  background: #2b2e3e;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3b3f54;
+}
+
+/* Accent Buttons */
+.btn-moviebox,
+.btn-logit {
+  background-color: var(--mb-red);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+.btn-moviebox:hover,
+.btn-moviebox:focus,
+.btn-logit:hover,
+.btn-logit:focus {
+  background-color: var(--mb-red-hover);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
+}
+
+.btn-moviebox-outline,
+.btn-logit-outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.btn-moviebox-outline:hover,
+.btn-logit-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Card Styling */
+.moviebox-card,
+.logit-card {
+  background-color: var(--mb-bg-card);
+  border: 1px solid var(--mb-border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.moviebox-card:hover,
+.logit-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(229, 9, 20, 0.5);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* Badges */
+.badge-status-plan_to_watch {
+  background-color: #3b82f6;
+  color: #fff;
+}
+.badge-status-watching {
+  background-color: #eab308;
+  color: #000;
+}
+.badge-status-completed {
+  background-color: #10b981;
+  color: #fff;
+}
+.badge-status-dropped {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+/* Navbar blur */
+.moviebox-navbar,
+.logit-navbar {
+  background-color: rgba(15, 16, 20, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
